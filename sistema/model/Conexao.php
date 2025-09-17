@@ -1,41 +1,26 @@
-    <?php
-        class Conexao {
-            	private $id;
-	private $servidor;
-	private $banco;
-	private $usuario;
-	private $senha;
-
-            	function getId(){
-		return $this->id;
-	}
-	function setId($id){
-		$this->id=$id;
-	}
-	function getServidor(){
-		return $this->servidor;
-	}
-	function setServidor($servidor){
-		$this->servidor=$servidor;
-	}
-	function getBanco(){
-		return $this->banco;
-	}
-	function setBanco($banco){
-		$this->banco=$banco;
-	}
-	function getUsuario(){
-		return $this->usuario;
-	}
-	function setUsuario($usuario){
-		$this->usuario=$usuario;
-	}
-	function getSenha(){
-		return $this->senha;
-	}
-	function setSenha($senha){
-		$this->senha=$senha;
-	}
-
+<?php
+class Conexao {
+    private $server;
+    private $banco;
+    private $usuario;
+    private $senha;
+    function __construct() {
+        $this->server = '127.0.0.1';
+        $this->banco = 'pizzaria';
+        $this->usuario = 'root';
+        $this->senha = '';
+    }
+    function conectar() {
+        try {
+            $conn = new PDO(
+                "mysql:host=" . $this->server . ";dbname=" . $this->banco,
+                $this->usuario,
+                $this->senha
+            );
+            return $conn;
+        } catch (Exception $e) {
+            echo "Erro ao conectar com o Banco de dados: " . $e->getMessage();
         }
-    ?>
+    }
+}
+?>

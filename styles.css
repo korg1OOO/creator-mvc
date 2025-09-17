@@ -1,3 +1,27 @@
+.mensagem {
+  background-color: #00c3fe;
+  color: #0000bf;
+  border: 1px solid #0000bf;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.mensagem_erro {
+  background-color: red;
+  color: darkred;
+  border: 1px solid darkred;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
 /* ESTILIZAÇÃO PEGA DO TEMPLATE: https://codepen.io/alvaromontoro/pen/JjoWVmx */
 
 html, body {
@@ -391,4 +415,33 @@ figure .shirt-2 {
 figure .shirt-2 {
   left: 52.5%;
   transform: skew(10deg) rotate(-15deg);
+}
+
+select {
+    border: 1px solid var(--border);
+    border-radius: var(--borderRadius);
+    box-sizing: border-box;
+    font-size: 1rem;
+    height: 2.25rem;
+    line-height: 1.25rem;
+    margin-top: 0.25rem;
+    order: 2;
+    padding: 0.25rem 0.5rem;
+    width: 15rem;
+    transition: all 0.25s;
+    background: white;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select:focus,
+select:active {
+    border-color: hsl(var(--fgColorH), calc(var(--fgColorS) * 2), calc(var(--fgColorL) * 1.15));
+    box-shadow: 0 1px hsl(var(--fgColorH), calc(var(--fgColorS) * 2), calc(var(--fgColorL) * 1.15));
+    outline: none;
+}
+
+label:hover select {
+    border-color: hsl(var(--fgColorH), var(--fgColorS), var(--fgColorL));
 }
