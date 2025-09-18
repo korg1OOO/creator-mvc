@@ -118,47 +118,69 @@ EOT;
     }
 
     function classesView() {
-        if (empty($this->tabelas)) {
-            header("Location:index.php?msg=4");
-            exit;
-        }
-        foreach ($this->tabelas as $tabela) {
-            $nomeTabela = reset($tabela);
-            $atributos = $this->buscaAtributos($nomeTabela);
-
-            $formCampos = "";
-foreach ($atributos as $atributo) {
-    if ($atributo->Key === 'PRI' && $atributo->isAutoIncrement) {
-        continue;
+    if (empty($this->tabelas)) {
+        header("Location:index.php?msg=4");
+        exit;
     }
-    $field = $atributo->Field;
-    $type = $this->databaseParaInput($atributo->Type);
-    $formCampos .= "        <label for='{$field}'>{$field}</label>\n";
-    $formCampos .= "        <input type='{$type}' name='{$field}' id='{$field}'><br>\n";
-}
+    foreach ($this->tabelas as $tabela) {
+        $nomeTabela = reset($tabela);
+        $atributos = $this->buscaAtributos($nomeTabela);
 
-            $conteudo = <<<HTML
+        $formCampos = "";
+        $tabelaCabecalhos = "";
+        $tabelaDados = "";
+        foreach ($atributos as $atributo) {
+            $campo = $atributo->Field;
+            $tipo = $this->databaseParaInput($atributo->Type);
+
+            if ($atributo->Key !== 'PRI' || !$atributo->isAutoIncrement) {
+                $formCampos .= "        <label for='{$campo}'>" . ucfirst($campo) . "</label>\n";
+                $formCampos .= "        <input type='{$tipo}' name='{$campo}' id='{$campo}'><br>\n";
+            }
+
+            $tabelaCabecalhos .= "            <th>" . ucfirst($campo) . "</th>\n";
+
+            $tabelaDados .= "                <td>{{$campo}}</td>\n";
+        }
+
+        $conteudo = <<<HTML
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cadastro de {$nomeTabela}</title>
+    <title>Cadastro e Visualização de {$nomeTabela}</title>
     <link rel="stylesheet" href="../css/estilos.css">
 </head>
 <body>
-    <form method="POST" action="../control/{$nomeTabela}Control.php?a=1">
-        <h2>Cadastro de {$nomeTabela}</h2>
+    <div class="conteiner">
+        <form method="POST" action="../control/{$nomeTabela}Control.php?a=1">
+            <h2>Cadastro de {$nomeTabela}</h2>
 {$formCampos}
-        <input type="submit" value="Enviar">
-    </form>
+            <input type="submit" value="Enviar">
+        </form>
+
+        <h2>Registros de {$nomeTabela}</h2>
+        <table class="tabela-dados">
+            <thead>
+                <tr>
+{$tabelaCabecalhos}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+{$tabelaDados}
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
 HTML;
-            file_put_contents("sistema/view/{$nomeTabela}.php", $conteudo);
-        }
+        file_put_contents("sistema/view/{$nomeTabela}.php", $conteudo);
     }
+}
 
     function criaEstilosCSS() {
-        $conteudo = <<<CSS
+    $conteudo = <<<CSS
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -166,13 +188,17 @@ body {
     padding: 20px;
 }
 
+.conteiner {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
 form {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    margin: 0 auto;
+    margin-bottom: 30px;
 }
 
 h2 {
@@ -222,9 +248,42 @@ input[type="submit"]:focus {
     outline: none;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+
+.tabela-dados {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.tabela-dados th, .tabela-dados td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.tabela-dados th {
+    background-color: #007BFF;
+    color: white;
+    font-weight: bold;
+}
+
+.tabela-dados tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tabela-dados tr:hover {
+    background-color: #f1f1f1;
+}
+
+.tabela-dados td {
+    color: #333;
+}
 CSS;
-        file_put_contents("sistema/css/estilos.css", $conteudo);
-    }
+    file_put_contents("sistema/css/estilos.css", $conteudo);
+}
 
     function databaseParaInput($tipoBanco) {
         $tipoBase = preg_replace('/\(.*/', '', strtolower($tipoBanco));
